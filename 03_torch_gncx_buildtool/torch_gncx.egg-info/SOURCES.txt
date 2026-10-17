@@ -1,0 +1,16 @@
+MANIFEST.in
+README.md
+pyproject.toml
+setup.py
+csrc/gncx_torch_c_api.cpp
+tests/benchmark_torch_gncx.py
+tests/test_pypi_package.py
+torch_gncx/__init__.py
+torch_gncx/x_conv.py
+torch_gncx/x_linear.py
+torch_gncx.egg-info/PKG-INFO
+torch_gncx.egg-info/SOURCES.txt
+torch_gncx.egg-info/dependency_links.txt
+torch_gncx.egg-info/top_level.txt
+torch_gncx/bin/gncx_core.dll
+torch_gncx/csrc/gncx_torch_c_api.cpp

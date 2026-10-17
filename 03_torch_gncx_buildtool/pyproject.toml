@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "torch-gncx"
 version = "0.1.0"
 description = "GNC-X 4-Phase X-Folding Linear & Convolutional Tensor Engine (C++20 / Python / PyTorch)"
-readme = "../README.md"
+readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [
   { name = "Zaqueu Ribeiro da Costa" }
