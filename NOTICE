@@ -1,0 +1,9 @@
+GNC-X (Geometric Navigational Core Architecture) — O Genoma Computacional Espacial
+Copyright 2026 Zaqueu Ribeiro da Costa (https://github.com/omega-Core-Dev)
+
+This product includes research, mathematical formulations (Invariant Diagonal Sieves,
+4-Phase Quadrant Constellation Logic, X-Folding Linear & Convolutional Engines),
+C++20 Virtual Machine Simulator, and Python/PyTorch/CUDA Buildtools originally
+conceived and designed by Zaqueu Ribeiro da Costa.
+
+Licensed under the Apache License, Version 2.0.

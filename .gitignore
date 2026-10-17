@@ -1,0 +1,18 @@
+# Python byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# CMake / Build directories
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# Transient disk images (regenerated automatically by gncx_simulator)
+*.img
+
+# OS metadata
+.DS_Store
+Thumbs.db

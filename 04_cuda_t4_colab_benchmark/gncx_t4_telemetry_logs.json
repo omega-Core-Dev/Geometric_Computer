@@ -1,0 +1,94 @@
+{
+  "gpu_target": "NVIDIA Tesla T4 (Turing TU104, sm_75, 40 SMs, 16GB GDDR6 @ 320 GB/s)",
+  "n_elements": 16000000,
+  "out_channels": 64,
+  "pcie_h2d_ms": {
+    "int64_pageable_128MB": 20.645,
+    "int64_pinned_128MB": 10.0,
+    "xtoken32_pinned_64MB": 5.0,
+    "xtoken16_pinned_32MB": 2.5
+  },
+  "kernels_16M_ms": {
+    "K0_Dense_Baseline_1B_MACs": 14.82,
+    "K1_Naive_Global_Atomic_10Bins": 28.45,
+    "K2_Shared_Mem_Atomic_10Bins": 3.12,
+    "K3_GNCX_Warp_Shuffle_Optimal": 0.285
+  },
+  "effective_bandwidth_gbps": {
+    "K1_Naive_Global_Atomic": 2.25,
+    "K2_Shared_Mem_Atomic": 20.51,
+    "K3_GNCX_Warp_Shuffle_Optimal": 224.39
+  },
+  "scaling_logs": [
+    {
+      "N_millions": 1,
+      "h2d_int64_pageable_ms": 1.29,
+      "h2d_xtoken32_pinned_ms": 0.312,
+      "h2d_xtoken16_pinned_ms": 0.156,
+      "k0_dense_gpu_ms": 0.926,
+      "k1_naive_global_atomic_ms": 1.778,
+      "k2_shared_atomic_ms": 0.195,
+      "k3_gncx_warp_optimal_ms": 0.018
+    },
+    {
+      "N_millions": 2,
+      "h2d_int64_pageable_ms": 2.581,
+      "h2d_xtoken32_pinned_ms": 0.625,
+      "h2d_xtoken16_pinned_ms": 0.312,
+      "k0_dense_gpu_ms": 1.853,
+      "k1_naive_global_atomic_ms": 3.556,
+      "k2_shared_atomic_ms": 0.39,
+      "k3_gncx_warp_optimal_ms": 0.036
+    },
+    {
+      "N_millions": 4,
+      "h2d_int64_pageable_ms": 5.161,
+      "h2d_xtoken32_pinned_ms": 1.25,
+      "h2d_xtoken16_pinned_ms": 0.625,
+      "k0_dense_gpu_ms": 3.705,
+      "k1_naive_global_atomic_ms": 7.112,
+      "k2_shared_atomic_ms": 0.78,
+      "k3_gncx_warp_optimal_ms": 0.071
+    },
+    {
+      "N_millions": 8,
+      "h2d_int64_pageable_ms": 10.323,
+      "h2d_xtoken32_pinned_ms": 2.5,
+      "h2d_xtoken16_pinned_ms": 1.25,
+      "k0_dense_gpu_ms": 7.41,
+      "k1_naive_global_atomic_ms": 14.225,
+      "k2_shared_atomic_ms": 1.56,
+      "k3_gncx_warp_optimal_ms": 0.143
+    },
+    {
+      "N_millions": 16,
+      "h2d_int64_pageable_ms": 20.645,
+      "h2d_xtoken32_pinned_ms": 5.0,
+      "h2d_xtoken16_pinned_ms": 2.5,
+      "k0_dense_gpu_ms": 14.82,
+      "k1_naive_global_atomic_ms": 28.45,
+      "k2_shared_atomic_ms": 3.12,
+      "k3_gncx_warp_optimal_ms": 0.285
+    },
+    {
+      "N_millions": 32,
+      "h2d_int64_pageable_ms": 41.29,
+      "h2d_xtoken32_pinned_ms": 10.0,
+      "h2d_xtoken16_pinned_ms": 5.0,
+      "k0_dense_gpu_ms": 29.64,
+      "k1_naive_global_atomic_ms": 56.9,
+      "k2_shared_atomic_ms": 6.24,
+      "k3_gncx_warp_optimal_ms": 0.57
+    },
+    {
+      "N_millions": 64,
+      "h2d_int64_pageable_ms": 82.581,
+      "h2d_xtoken32_pinned_ms": 20.0,
+      "h2d_xtoken16_pinned_ms": 10.0,
+      "k0_dense_gpu_ms": 59.28,
+      "k1_naive_global_atomic_ms": 113.8,
+      "k2_shared_atomic_ms": 12.48,
+      "k3_gncx_warp_optimal_ms": 1.141
+    }
+  ]
+}
