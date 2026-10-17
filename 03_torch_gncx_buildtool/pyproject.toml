@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torch-gncx"
+version = "0.1.0"
+description = "GNC-X 4-Phase X-Folding Linear & Convolutional Tensor Engine (C++20 / Python / PyTorch)"
+readme = "../README.md"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Zaqueu Ribeiro da Costa" }
+]
+requires-python = ">=3.9"
+keywords = ["gnc-x", "geometric-computer", "pytorch", "c++20", "4-phase", "convolution"]
+
+[project.urls]
+Homepage = "https://github.com/omega-Core-Dev/Geometric_Computer"
+Repository = "https://github.com/omega-Core-Dev/Geometric_Computer"
+
+[tool.setuptools]
+packages = ["torch_gncx"]
+
+[tool.setuptools.package-data]
+torch_gncx = ["bin/*.dll", "bin/*.so", "bin/*.dylib", "csrc/*.cpp"]

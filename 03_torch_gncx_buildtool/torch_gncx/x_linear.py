@@ -12,6 +12,9 @@ buffers / PyTorch CPU tensors) and provides:
 
 import ctypes
 import os
+import shutil
+import subprocess
+import sys
 from array import array
 from typing import Optional, Tuple
 
@@ -26,16 +29,63 @@ class GNCXCompactTokenStruct(ctypes.Structure):
 
 
 class GNCXCoreBridge:
-    """Loads and binds the native C++20 `gncx_core.dll` shared library."""
+    """
+    Loads and binds the native C++20 `gncx_core` shared library (.dll / .so / .dylib).
+    If running on Linux (e.g., Google Colab) or macOS after installing directly from
+    GitHub (`pip install git+https://github.com/omega-Core-Dev/Geometric_Computer.git#subdirectory=03_torch_gncx_buildtool`),
+    automatically compiles `csrc/gncx_torch_c_api.cpp` on first load!
+    """
 
     _instance: Optional["GNCXCoreBridge"] = None
 
+    @staticmethod
+    def _resolve_or_compile_library() -> str:
+        pkg_dir = os.path.dirname(os.path.abspath(__file__))
+        base_dir = os.path.dirname(pkg_dir)
+
+        if sys.platform.startswith("win"):
+            lib_name = "gncx_core.dll"
+        elif sys.platform == "darwin":
+            lib_name = "libgncx_core.dylib"
+        else:
+            lib_name = "libgncx_core.so"
+
+        candidates = [
+            os.path.join(pkg_dir, "bin", lib_name),
+            os.path.join(base_dir, "bin", lib_name),
+        ]
+        for path in candidates:
+            if os.path.exists(path):
+                return path
+
+        # Auto-compile on first import (ideal for Linux / Google Colab via GitHub install)
+        cpp_candidates = [
+            os.path.join(pkg_dir, "csrc", "gncx_torch_c_api.cpp"),
+            os.path.join(base_dir, "csrc", "gncx_torch_c_api.cpp"),
+        ]
+        cpp_src = next((p for p in cpp_candidates if os.path.exists(p)), None)
+        if cpp_src is None:
+            raise FileNotFoundError(
+                f"Biblioteca nativa {lib_name} e fonte C++20 nao encontrados em {base_dir}"
+            )
+
+        out_dir = os.path.join(pkg_dir, "bin")
+        os.makedirs(out_dir, exist_ok=True)
+        out_lib = os.path.join(out_dir, lib_name)
+
+        compiler = shutil.which("clang++") or shutil.which("g++")
+        if compiler is None:
+            raise RuntimeError("Compilador C++20 (clang++ ou g++) nao encontrado no PATH.")
+
+        cmd = [compiler, "-shared", "-std=c++20", "-O3", "-fPIC", cpp_src, "-o", out_lib]
+        subprocess.run(cmd, check=True)
+        return out_lib
+
     def __init__(self, dll_path: Optional[str] = None) -> None:
         if dll_path is None:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            dll_path = os.path.join(base_dir, "bin", "gncx_core.dll")
+            dll_path = self._resolve_or_compile_library()
         if not os.path.exists(dll_path):
-            raise FileNotFoundError(f"GNC-X C++20 DLL nao encontrada em: {dll_path}")
+            raise FileNotFoundError(f"GNC-X C++20 library nao encontrada em: {dll_path}")
 
         self.lib = ctypes.CDLL(dll_path)
 
