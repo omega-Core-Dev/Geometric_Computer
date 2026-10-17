@@ -499,3 +499,97 @@ GNCX_API void gncx_dense_conv2d_baseline(
     }
 }
 
+/**
+ * ============================================================================
+ * GNC-X "X-FOLDING" BACKWARD PASS (`gncx_xfold_linear_backward`)
+ * ============================================================================
+ * Computes exact gradients for training (`loss.backward()`):
+ *   1. Weight Gradients: dL/dW[m, d] = grad_output[m] * sector_mass[d]
+ *      (Only 10 * M multiplications regardless of N!)
+ *   2. Input Gradients:  dL/dX[i]    = sum_m grad_output[m] * W[m, d_i]
+ *      (Computed via 10 diagonal gradient buckets + O(1) lookup per token!)
+ */
+GNCX_API void gncx_xfold_linear_backward(
+    const GNCXCompactToken* __restrict tokens,
+    size_t num_elements,
+    int32_t layer_k,
+    const int64_t* __restrict weights_m_by_10,
+    const int64_t* __restrict grad_output_m,
+    size_t num_channels,
+    int64_t* __restrict out_grad_weights_m_by_10,
+    int64_t* __restrict out_grad_input_n
+) {
+    int lk = std::clamp(layer_k, 0, MAX_K);
+    std::array<int64_t, 10> net_pivot_phase{};
+    std::array<int64_t, 10> net_residue_sum{};
+
+    for (size_t i = 0; i < num_elements; ++i) {
+        const GNCXCompactToken tok = tokens[i];
+        uint8_t d = tok.diag_d;
+        uint8_t b1 = (tok.phase_2bit >> 1) & 1U;
+        uint8_t b0 = tok.phase_2bit & 1U;
+
+        int64_t s1 = (static_cast<int64_t>(b1) << 1) - 1;
+        int64_t mask0 = -static_cast<int64_t>(b0 ^ 1U);
+        int64_t signed_delta = (static_cast<int64_t>(tok.abs_delta) ^ mask0) - mask0;
+
+        net_pivot_phase[d] += s1;
+        net_residue_sum[d] += signed_delta;
+    }
+
+    std::array<int64_t, 10> sector_mass{};
+    for (size_t d = 0; d < 10; ++d) {
+        sector_mass[d] = net_pivot_phase[d] * DIAGONAL_SIEVES[lk][d] + net_residue_sum[d];
+    }
+
+    std::array<int64_t, 10> diag_grad{};
+    for (size_t m = 0; m < num_channels; ++m) {
+        int64_t g_m = grad_output_m[m];
+        const int64_t* __restrict w_row = weights_m_by_10 + (m * 10);
+        int64_t* __restrict gw_row = out_grad_weights_m_by_10 + (m * 10);
+        for (size_t d = 0; d < 10; ++d) {
+            gw_row[d] = g_m * sector_mass[d];
+            diag_grad[d] += g_m * w_row[d];
+        }
+    }
+
+    if (out_grad_input_n != nullptr) {
+        for (size_t i = 0; i < num_elements; ++i) {
+            out_grad_input_n[i] = diag_grad[tokens[i].diag_d];
+        }
+    }
+}
+
+GNCX_API void gncx_dense_linear_backward(
+    const int64_t* __restrict raw_inputs,
+    const GNCXCompactToken* __restrict tokens,
+    size_t num_elements,
+    const int64_t* __restrict weights_m_by_10,
+    const int64_t* __restrict grad_output_m,
+    size_t num_channels,
+    int64_t* __restrict out_grad_weights_m_by_10,
+    int64_t* __restrict out_grad_input_n
+) {
+    for (size_t m = 0; m < num_channels * 10; ++m) {
+        out_grad_weights_m_by_10[m] = 0;
+    }
+    for (size_t m = 0; m < num_channels; ++m) {
+        int64_t g_m = grad_output_m[m];
+        int64_t* __restrict gw_row = out_grad_weights_m_by_10 + (m * 10);
+        for (size_t i = 0; i < num_elements; ++i) {
+            gw_row[tokens[i].diag_d] += g_m * raw_inputs[i];
+        }
+    }
+    if (out_grad_input_n != nullptr) {
+        for (size_t i = 0; i < num_elements; ++i) {
+            uint8_t d = tokens[i].diag_d;
+            int64_t acc = 0;
+            for (size_t m = 0; m < num_channels; ++m) {
+                acc += grad_output_m[m] * weights_m_by_10[m * 10 + d];
+            }
+            out_grad_input_n[i] = acc;
+        }
+    }
+}
+
+

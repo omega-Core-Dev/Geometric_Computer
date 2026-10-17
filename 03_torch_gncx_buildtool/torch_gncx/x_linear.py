@@ -180,6 +180,32 @@ class GNCXCoreBridge:
         ]
         self.lib.gncx_dense_conv2d_baseline.restype = None
 
+        # gncx_xfold_linear_backward
+        self.lib.gncx_xfold_linear_backward.argtypes = [
+            ctypes.POINTER(GNCXCompactTokenStruct),
+            ctypes.c_size_t,
+            ctypes.c_int32,
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.c_size_t,
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.POINTER(ctypes.c_int64),
+        ]
+        self.lib.gncx_xfold_linear_backward.restype = None
+
+        # gncx_dense_linear_backward
+        self.lib.gncx_dense_linear_backward.argtypes = [
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.POINTER(GNCXCompactTokenStruct),
+            ctypes.c_size_t,
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.c_size_t,
+            ctypes.POINTER(ctypes.c_int64),
+            ctypes.POINTER(ctypes.c_int64),
+        ]
+        self.lib.gncx_dense_linear_backward.restype = None
+
     @classmethod
     def get(cls) -> "GNCXCoreBridge":
         if cls._instance is None:
@@ -214,6 +240,22 @@ class XTensor4Phase:
         )
         return xt
 
+    @classmethod
+    def from_any(cls, data: object, layer_k: int = 3) -> "XTensor4Phase":
+        """Accepts `XTensor4Phase`, `array('q')`, Python `list`/`tuple`, or `torch.Tensor`."""
+        if isinstance(data, XTensor4Phase):
+            return data
+        if isinstance(data, array) and data.typecode == "q":
+            return cls.from_int64_buffer(data, layer_k=layer_k)
+        # Support PyTorch Tensor if passed
+        if hasattr(data, "detach") and hasattr(data, "cpu"):
+            flat_list = [int(x) for x in data.detach().cpu().view(-1).tolist()]
+            return cls.from_int64_buffer(array("q", flat_list), layer_k=layer_k)
+        return cls.from_int64_buffer(array("q", list(data)), layer_k=layer_k)  # type: ignore[arg-type]
+
+    def to_list(self) -> list:
+        return [int(self.reconstructed[i]) for i in range(self.num_elements)]
+
     def negate_inplace_xor11(self) -> None:
         """Negates the entire tensor in-place by flipping the 2-bit phases (XOR 0b11)."""
         GNCXCoreBridge.get().lib.gncx_negate_tensor_phase_xor(self.tokens, self.num_elements)
@@ -223,20 +265,28 @@ class XFoldLinear:
     """
     GNC-X "X-Folding" Linear Projection Layer (`torch.nn.Linear` drop-in compatible).
     Evaluates `M` output channels over `N` 4-Phase X-Tokens by folding into the
-    10 Invariant Diagonal Anchors D(k, 0..9) in C++20.
+    10 Invariant Diagonal Anchors D(k, 0..9) in C++20, and supports O(10*M)
+    exact backward gradient calculation (`backward_xfold`) and SGD weight updates!
     """
 
     def __init__(self, out_channels: int, layer_k: int = 3) -> None:
         self.out_channels = out_channels
         self.layer_k = layer_k
         self.weights = (ctypes.c_int64 * (out_channels * 10))()
+        self.grad_weights = (ctypes.c_int64 * (out_channels * 10))()
         for m in range(out_channels):
             for d in range(10):
                 self.weights[m * 10 + d] = (m + 1) * (d + 3) - 17
+                self.grad_weights[m * 10 + d] = 0
+
+    def __call__(self, x: object) -> array:
+        xt = XTensor4Phase.from_any(x, layer_k=self.layer_k)
+        out, _ = self.forward_xfold(xt)
+        return out
 
     def forward_xfold(self, x_tensor: XTensor4Phase) -> Tuple[array, int]:
         """Executes the C++20 X-Folding forward pass (only 10 * M multiplications)."""
-        out_buf = array("q", [0] * self.out_channels)
+        out_buf = array("q", [0]) * self.out_channels
         out_addr, _ = out_buf.buffer_info()
         out_ptr = ctypes.cast(out_addr, ctypes.POINTER(ctypes.c_int64))
 
@@ -252,7 +302,7 @@ class XFoldLinear:
 
     def forward_dense_baseline(self, x_tensor: XTensor4Phase) -> array:
         """Executes the standard N * M dense multiplication for bit-exactness verification."""
-        out_buf = array("q", [0] * self.out_channels)
+        out_buf = array("q", [0]) * self.out_channels
         out_addr, _ = out_buf.buffer_info()
         out_ptr = ctypes.cast(out_addr, ctypes.POINTER(ctypes.c_int64))
 
@@ -265,3 +315,64 @@ class XFoldLinear:
             out_ptr,
         )
         return out_buf
+
+    def backward_xfold(
+        self, x_tensor: XTensor4Phase, grad_output: array
+    ) -> Tuple[array, array]:
+        """
+        Executes the C++20 X-Folding Backward Pass (`loss.backward()`):
+          - Computes exact dL/dW[m, d] using ONLY 10 * M multiplications!
+          - Computes exact dL/dX[i] via O(1) 10-diagonal lookup!
+        Returns `(grad_weights_array, grad_input_array)`.
+        """
+        assert len(grad_output) == self.out_channels, "grad_output deve ter tamanho out_channels!"
+        go_addr, _ = grad_output.buffer_info()
+        go_ptr = ctypes.cast(go_addr, ctypes.POINTER(ctypes.c_int64))
+
+        grad_x_buf = array("q", [0]) * x_tensor.num_elements
+        gx_addr, _ = grad_x_buf.buffer_info()
+        gx_ptr = ctypes.cast(gx_addr, ctypes.POINTER(ctypes.c_int64))
+
+        GNCXCoreBridge.get().lib.gncx_xfold_linear_backward(
+            x_tensor.tokens,
+            x_tensor.num_elements,
+            self.layer_k,
+            self.weights,
+            go_ptr,
+            self.out_channels,
+            self.grad_weights,
+            gx_ptr,
+        )
+        gw_buf = array("q", [self.grad_weights[i] for i in range(self.out_channels * 10)])
+        return gw_buf, grad_x_buf
+
+    def backward_dense_baseline(
+        self, x_tensor: XTensor4Phase, grad_output: array
+    ) -> Tuple[array, array]:
+        """Executes standard N * M dense backward pass for bit-exact gradient verification."""
+        go_addr, _ = grad_output.buffer_info()
+        go_ptr = ctypes.cast(go_addr, ctypes.POINTER(ctypes.c_int64))
+
+        dense_gw = (ctypes.c_int64 * (self.out_channels * 10))()
+        grad_x_buf = array("q", [0]) * x_tensor.num_elements
+        gx_addr, _ = grad_x_buf.buffer_info()
+        gx_ptr = ctypes.cast(gx_addr, ctypes.POINTER(ctypes.c_int64))
+
+        GNCXCoreBridge.get().lib.gncx_dense_linear_backward(
+            x_tensor.reconstructed,
+            x_tensor.tokens,
+            x_tensor.num_elements,
+            self.weights,
+            go_ptr,
+            self.out_channels,
+            dense_gw,
+            gx_ptr,
+        )
+        gw_buf = array("q", [dense_gw[i] for i in range(self.out_channels * 10)])
+        return gw_buf, grad_x_buf
+
+    def step_sgd(self, lr_shift_bits: int = 10) -> None:
+        """Applies integer/fixed-point SGD update to the 10-diagonal weights: W -= (grad_W >> lr_shift)."""
+        for i in range(self.out_channels * 10):
+            self.weights[i] -= (self.grad_weights[i] >> lr_shift_bits)
+

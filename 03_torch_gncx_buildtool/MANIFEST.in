@@ -1,0 +1,6 @@
+include pyproject.toml
+include setup.py
+recursive-include torch_gncx/bin *.dll *.so *.dylib
+recursive-include torch_gncx/csrc *.cpp *.hpp
+recursive-include csrc *.cpp *.hpp
+recursive-include tests *.py

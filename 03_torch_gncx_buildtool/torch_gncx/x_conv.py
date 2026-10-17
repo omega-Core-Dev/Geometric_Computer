@@ -34,6 +34,11 @@ class XFoldConv1d:
     def out_length(self, length: int) -> int:
         return max(0, length - self.kernel_size + 1)
 
+    def __call__(self, x: object) -> array:
+        xt = XTensor4Phase.from_any(x, layer_k=self.layer_k)
+        out, _ = self.forward_xfold(xt)
+        return out
+
     def forward_xfold(
         self, x_tensor: XTensor4Phase, out_buf: " array | None " = None
     ) -> Tuple[array, int]:
@@ -100,6 +105,11 @@ class XFoldConv2d:
         out_h = max(0, height - self.kernel_h + 1)
         out_w = max(0, width - self.kernel_w + 1)
         return (self.out_channels, out_h, out_w)
+
+    def __call__(self, x: object, height: int, width: int) -> array:
+        xt = XTensor4Phase.from_any(x, layer_k=self.layer_k)
+        out, _ = self.forward_xfold(xt, height, width)
+        return out
 
     def forward_xfold(
         self,
