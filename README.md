@@ -1,5 +1,9 @@
 # GNC-X (*Geometric Navigational Core Architecture*) — Monorepo & Silicon Incubator
 
+<p align="center">
+  <img src="./01_docs_pesquisa/gncx_github_social_preview_1280x640.png" alt="GNC-X GitHub Social Preview Banner (1280x640)" width="100%" />
+</p>
+
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)](https://isocpp.org/)
 [![PyTorch Bridge](https://img.shields.io/badge/Buildtool-torch__gncx-EE4C2C.svg)](./03_torch_gncx_buildtool)
@@ -19,7 +23,9 @@ Geometric_Computer/
 ├── LICENSE                                     # Licença Apache 2.0
 ├── NOTICE                                      # Termo de atribuição autoral (Apache 2.0)
 │
-├── 01_docs_pesquisa/                           # Artigos, Whitepaper original, Infográfico e Manifesto
+├── 01_docs_pesquisa/                           # Artigos, Whitepaper original, Infográfico, OG Card e Manifesto
+│   ├── gncx_github_social_preview_1280x640.png # GitHub Social Preview OpenGraph Card (1280x640 px, 40pt margin)
+│   ├── gncx_github_og_card.svg                 # Versão vetorial SVG 1280x640 com métricas e equações
 │   ├── GNC-X - O Genoma Computacional Espacial (Whitepaper).pdf
 │   ├── Gemini_Generated_Image (1).jpeg
 │   ├── GNC-X_Especificacao_Formal_e_Simulador.md

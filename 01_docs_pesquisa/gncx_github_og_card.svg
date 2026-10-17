@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070A12"/>
+      <stop offset="50%" stop-color="#0D1324"/>
+      <stop offset="100%" stop-color="#090D1A"/>
+    </linearGradient>
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#22C55E"/>
+    </linearGradient>
+    <linearGradient id="purpleGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#FACC15"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#1E293B" stroke-width="0.7" opacity="0.55"/>
+    </pattern>
+  </defs>
+
+  <!-- Full 1280x640 Background -->
+  <rect width="1280" height="640" fill="url(#bgGrad)"/>
+  <rect width="1280" height="640" fill="url(#grid)"/>
+
+  <!-- 40pt (54px) Safe Zone Frame (Subtle blueprint border inside 1280x640) -->
+  <rect x="54" y="54" width="1172" height="532" rx="18" fill="#0B1120" fill-opacity="0.72" stroke="#334155" stroke-width="1.5"/>
+  <!-- Corner registration ticks matching GitHub Repo Card safe margins -->
+  <path d="M 54 78 L 54 54 L 78 54" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+  <path d="M 1202 54 L 1226 54 L 1226 78" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+  <path d="M 54 562 L 54 586 L 78 586" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+  <path d="M 1202 586 L 1226 586 L 1226 562" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+
+  <!-- ================= LEFT COLUMN: PROJECT IDENTITY & METRICS ================= -->
+  <g transform="translate(92, 96)">
+    <!-- Top Pill Badges -->
+    <rect x="0" y="0" width="190" height="30" rx="15" fill="#0284C7" fill-opacity="0.22" stroke="#38BDF8" stroke-width="1.2"/>
+    <text x="95" y="20" fill="#38BDF8" font-family="Segoe UI, Inter, monospace" font-size="12.5" font-weight="700" text-anchor="middle">omega-Core-Dev / GNC-X</text>
+
+    <rect x="202" y="0" width="132" height="30" rx="15" fill="#16A34A" fill-opacity="0.2" stroke="#22C55E" stroke-width="1.2"/>
+    <text x="268" y="20" fill="#4ADE80" font-family="Segoe UI, Inter, monospace" font-size="12.5" font-weight="700" text-anchor="middle">Apache-2.0</text>
+
+    <rect x="346" y="0" width="160" height="30" rx="15" fill="#9333EA" fill-opacity="0.2" stroke="#A855F7" stroke-width="1.2"/>
+    <text x="426" y="20" fill="#C084FC" font-family="Segoe UI, Inter, monospace" font-size="12.5" font-weight="700" text-anchor="middle">C++20 • PyTorch • CUDA</text>
+
+    <!-- Main Title -->
+    <text x="0" y="96" fill="#F8FAFC" font-family="Segoe UI, Inter, sans-serif" font-size="64" font-weight="900" letter-spacing="1">GNC-X</text>
+    <text x="228" y="94" fill="url(#cyanGlow)" font-family="Segoe UI, Inter, monospace" font-size="26" font-weight="800">v1.0 / v0.1.0</text>
+
+    <!-- Subtitle -->
+    <text x="0" y="134" fill="#38BDF8" font-family="Segoe UI, Inter, sans-serif" font-size="23" font-weight="700">Geometric Navigational Core Architecture</text>
+    <text x="0" y="164" fill="#94A3B8" font-family="Segoe UI, Inter, sans-serif" font-size="16">O Genoma Computacional Espacial — Crivos Diagonais Invariantes &amp; Lógica 4-Phase em X</text>
+
+    <!-- Mathematical Formula Box -->
+    <rect x="0" y="186" width="600" height="68" rx="10" fill="#0F172A" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="18" y="213" fill="#FACC15" font-family="Consolas, monospace" font-size="15.5" font-weight="700">Crivo Diagonal Invariante : D(k, d) = d · R_{k+1} = d · (10^{k+1} - 1) / 9</text>
+    <text x="18" y="239" fill="#38BDF8" font-family="Consolas, monospace" font-size="14.5" font-weight="600">Constelação 4-Phase (X)   : X = s₁·D(k,d) + s₀·|Δ|   |   -X ⟺ Phase ⊕ 0b11 (1 Ciclo)</text>
+
+    <!-- 3 Performance Benchmark Cards -->
+    <g transform="translate(0, 274)">
+      <rect x="0" y="0" width="190" height="86" rx="10" fill="#111827" stroke="#22C55E" stroke-width="1.4"/>
+      <text x="16" y="26" fill="#94A3B8" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="600">XFoldLinear (CPU C++20)</text>
+      <text x="16" y="58" fill="#4ADE80" font-family="Segoe UI, monospace" font-size="28" font-weight="900">37.16x</text>
+      <text x="16" y="76" fill="#64748B" font-family="Consolas, monospace" font-size="11.5">640 MULs vs 32M • 100% Exato</text>
+
+      <rect x="205" y="0" width="190" height="86" rx="10" fill="#111827" stroke="#38BDF8" stroke-width="1.4"/>
+      <text x="221" y="26" fill="#94A3B8" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="600">XFoldConv2d (2D Spatial)</text>
+      <text x="221" y="58" fill="#38BDF8" font-family="Segoe UI, monospace" font-size="28" font-weight="900">12.21x</text>
+      <text x="221" y="76" fill="#64748B" font-family="Consolas, monospace" font-size="11.5">O(1) Slide • 742k pares 0</text>
+
+      <rect x="410" y="0" width="190" height="86" rx="10" fill="#111827" stroke="#A855F7" stroke-width="1.4"/>
+      <text x="426" y="26" fill="#94A3B8" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="600">CUDA Tesla T4 (sm_75)</text>
+      <text x="426" y="58" fill="#C084FC" font-family="Segoe UI, monospace" font-size="28" font-weight="900">52.00x</text>
+      <text x="426" y="76" fill="#64748B" font-family="Consolas, monospace" font-size="11.5">Warp __shfl_down • 224 GB/s</text>
+    </g>
+
+    <!-- 5 Full-Stack VM Architecture Modules Bar -->
+    <g transform="translate(0, 382)">
+      <rect x="0" y="0" width="112" height="32" rx="6" fill="#0284C7" fill-opacity="0.25" stroke="#38BDF8" stroke-width="1"/>
+      <circle cx="14" cy="16" r="4" fill="#38BDF8"/>
+      <text x="24" y="20" fill="#E0F2FE" font-family="Consolas, monospace" font-size="12" font-weight="700">1.SISTEMA</text>
+
+      <rect x="122" y="0" width="126" height="32" rx="6" fill="#16A34A" fill-opacity="0.25" stroke="#22C55E" stroke-width="1"/>
+      <circle cx="136" cy="16" r="4" fill="#4ADE80"/>
+      <text x="146" y="20" fill="#DCFCE7" font-family="Consolas, monospace" font-size="12" font-weight="700">2.MATRIZ 8x8</text>
+
+      <rect x="258" y="0" width="118" height="32" rx="6" fill="#CA8A04" fill-opacity="0.25" stroke="#FACC15" stroke-width="1"/>
+      <circle cx="272" cy="16" r="4" fill="#FACC15"/>
+      <text x="282" y="20" fill="#FEF9C3" font-family="Consolas, monospace" font-size="12" font-weight="700">3.MEM L0-L3</text>
+
+      <rect x="386" y="0" width="106" height="32" rx="6" fill="#EA580C" fill-opacity="0.25" stroke="#FB923C" stroke-width="1"/>
+      <circle cx="400" cy="16" r="4" fill="#FB923C"/>
+      <text x="410" y="20" fill="#FFEDD5" font-family="Consolas, monospace" font-size="12" font-weight="700">4.GLA DISK</text>
+
+      <rect x="502" y="0" width="98" height="32" rx="6" fill="#9333EA" fill-opacity="0.25" stroke="#C084FC" stroke-width="1"/>
+      <circle cx="516" cy="16" r="4" fill="#C084FC"/>
+      <text x="526" y="20" fill="#F3E8FF" font-family="Consolas, monospace" font-size="12" font-weight="700">5.TENSOR</text>
+    </g>
+
+    <!-- Author Attribution Footer -->
+    <text x="0" y="446" fill="#94A3B8" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600">Autor da Concepção: <tspan fill="#F8FAFC" font-weight="800">Zaqueu Ribeiro da Costa</tspan>  •  github.com/omega-Core-Dev/Geometric_Computer</text>
+  </g>
+
+  <!-- ================= RIGHT COLUMN: 3D-IC 4-PHASE 'X' SIEVE DIAGRAM ================= -->
+  <g transform="translate(965, 320)">
+    <!-- Concentric Decimal Layer Rings (L0, L1, L2, L3) -->
+    <circle cx="0" cy="0" r="205" fill="#090E1A" stroke="#1E293B" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="176" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="5,5"/>
+    <circle cx="0" cy="0" r="132" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="5,5"/>
+    <circle cx="0" cy="0" r="88"  fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <circle cx="0" cy="0" r="44"  fill="none" stroke="#334155" stroke-width="1"/>
+
+    <!-- Orthogonal Axes -->
+    <line x1="-195" y1="0" x2="195" y2="0" stroke="#1E293B" stroke-width="1.5"/>
+    <line x1="0" y1="-195" x2="0" y2="195" stroke="#1E293B" stroke-width="1.5"/>
+
+    <!-- The Glowing Invariant 'X' Diagonal Sieve Rays -->
+    <line x1="-150" y1="-150" x2="150" y2="150" stroke="url(#purpleGold)" stroke-width="4.5" filter="url(#glow)"/>
+    <line x1="-150" y1="150" x2="150" y2="-150" stroke="url(#cyanGlow)" stroke-width="4.5" filter="url(#glow)"/>
+
+    <!-- Repunit Layer Nodes along the X Diagonals -->
+    <!-- Quadrant I: Phase 11 (++) Top-Right -->
+    <circle cx="31" cy="-31" r="5" fill="#4ADE80"/>
+    <circle cx="62" cy="-62" r="6" fill="#4ADE80"/>
+    <circle cx="93" cy="-93" r="7" fill="#22C55E"/>
+    <circle cx="125" cy="-125" r="8.5" fill="#38BDF8" stroke="#F8FAFC" stroke-width="1.5"/>
+    <text x="136" y="-120" fill="#4ADE80" font-family="Consolas, monospace" font-size="11.5" font-weight="700">+d·1111</text>
+
+    <!-- Quadrant II: Phase 01 (-+) Top-Left -->
+    <circle cx="-31" cy="-31" r="5" fill="#C084FC"/>
+    <circle cx="-62" cy="-62" r="6" fill="#C084FC"/>
+    <circle cx="-93" cy="-93" r="7" fill="#A855F7"/>
+    <circle cx="-125" cy="-125" r="8.5" fill="#A855F7" stroke="#F8FAFC" stroke-width="1.5"/>
+    <text x="-185" y="-120" fill="#C084FC" font-family="Consolas, monospace" font-size="11.5" font-weight="700">-d·1111</text>
+
+    <!-- Quadrant IV: Phase 10 (+-) Bottom-Right -->
+    <circle cx="31" cy="31" r="5" fill="#FACC15"/>
+    <circle cx="62" cy="62" r="6" fill="#FACC15"/>
+    <circle cx="93" cy="93" r="7" fill="#EAB308"/>
+    <circle cx="125" cy="125" r="8.5" fill="#FACC15" stroke="#F8FAFC" stroke-width="1.5"/>
+    <text x="136" y="130" fill="#FACC15" font-family="Consolas, monospace" font-size="11.5" font-weight="700">+D - |Δ|</text>
+
+    <!-- Quadrant III: Phase 00 (--) Bottom-Left -->
+    <circle cx="-31" cy="31" r="5" fill="#FB923C"/>
+    <circle cx="-62" cy="62" r="6" fill="#FB923C"/>
+    <circle cx="-93" cy="93" r="7" fill="#F97316"/>
+    <circle cx="-125" cy="125" r="8.5" fill="#FB923C" stroke="#F8FAFC" stroke-width="1.5"/>
+    <text x="-185" y="130" fill="#FB923C" font-family="Consolas, monospace" font-size="11.5" font-weight="700">-D - |Δ|</text>
+
+    <!-- 4 Phase Constellation Badges -->
+    <rect x="44" y="-182" width="116" height="30" rx="8" fill="#0F172A" stroke="#22C55E" stroke-width="1.5"/>
+    <text x="102" y="-162" fill="#4ADE80" font-family="Consolas, monospace" font-size="13.5" font-weight="800" text-anchor="middle">11 : (++ )</text>
+
+    <rect x="-160" y="-182" width="116" height="30" rx="8" fill="#0F172A" stroke="#A855F7" stroke-width="1.5"/>
+    <text x="-102" y="-162" fill="#C084FC" font-family="Consolas, monospace" font-size="13.5" font-weight="800" text-anchor="middle">01 : (-+ )</text>
+
+    <rect x="44" y="152" width="116" height="30" rx="8" fill="#0F172A" stroke="#FACC15" stroke-width="1.5"/>
+    <text x="102" y="172" fill="#FACC15" font-family="Consolas, monospace" font-size="13.5" font-weight="800" text-anchor="middle">10 : (+- )</text>
+
+    <rect x="-160" y="152" width="116" height="30" rx="8" fill="#0F172A" stroke="#FB923C" stroke-width="1.5"/>
+    <text x="-102" y="172" fill="#FB923C" font-family="Consolas, monospace" font-size="13.5" font-weight="800" text-anchor="middle">00 : (-- )</text>
+
+    <!-- Central Origin '0' Phase Annihilation Core -->
+    <circle cx="0" cy="0" r="22" fill="#0F172A" stroke="#38BDF8" stroke-width="3" filter="url(#glow)"/>
+    <text x="0" y="6" fill="#F8FAFC" font-family="Consolas, monospace" font-size="18" font-weight="900" text-anchor="middle">0</text>
+
+    <!-- Layer Labels -->
+    <text x="0" y="-48" fill="#94A3B8" font-family="Consolas, monospace" font-size="10.5" text-anchor="middle">L0 (11)</text>
+    <text x="0" y="-92" fill="#94A3B8" font-family="Consolas, monospace" font-size="10.5" text-anchor="middle">L1 (111)</text>
+    <text x="0" y="-136" fill="#38BDF8" font-family="Consolas, monospace" font-size="11" font-weight="700" text-anchor="middle">L3 (1111)</text>
+  </g>
+</svg>
